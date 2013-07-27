@@ -88,7 +88,7 @@
             iconElem.className    = 'icon ' + this.options.icon;
 
             titleElem.className   = 'title';
-            titleElem.innerText   = this.options.title;
+            titleElem.innerHTML   = this.options.title;
 
             actionsElem.className = 'actions pull-right';
 
@@ -163,41 +163,24 @@
 
         initEvents: function()
         {
-            // Drag & Drop
             this.element.mousedown( function()
             {
                 if( this.style.zIndex != webdesktop.windows.zIndexer )
                 {
                     this.style.zIndex = ++webdesktop.windows.zIndexer;
                 }
-            } );
-
-            this.element.topbar.mousedown( function( eventMouseDown )
+            }).draggable(
             {
-                var self = $( this ),
-                    iMouseX = eventMouseDown.offsetX,
-                    iMouseY = eventMouseDown.offsetY;
-
-                if( $( eventMouseDown.target ).is( '.icon, .title, .minimize, .maximize, .close' ) )
+                handle: this.element.topbar,
+                cancel: '.minimize, .maximize, .close',
+                start: function()
                 {
-                    return false;
-                }
-
-                desktopWindow.removeClass( 'shadowed' );
-
-                self.mousemove( function( eventMouseMove )
+                    $( this ).removeClass( 'shadowed' );
+                },
+                stop: function()
                 {
-                    desktopWindow.css(
-                    {
-                        top:  eventMouseMove.pageY - iMouseY,
-                        left: eventMouseMove.pageX - iMouseX
-                    } );
-                } );
-            } ).mouseup( function( eventMouseUp )
-            {
-                if( !$( eventMouseUp.target ).is( '.icon, .title, .minimize, .maximize, .close' ) )
-                {
-                    $( this ).unbind( 'mousemove' ).closest( '.window' ).addClass( 'shadowed' );
+                    $( this ).addClass( 'shadowed' );
+
                     self.iNormalPosY = desktopWindow[0].style.top;
                     self.iNormalPosX = desktopWindow[0].style.left;
                 }
