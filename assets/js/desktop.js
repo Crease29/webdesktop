@@ -7,9 +7,12 @@ webdesktop = {
 
 function recalcWindowPlayground()
 {
-    var oWindows = document.getElementById( 'windows' );
+    var oWindows = document.getElementById( 'windows' ),
+        oTaskbar = document.getElementById( 'taskbar' );
     oWindows.style.height = window.innerHeight - document.getElementById( 'taskbar' ).offsetHeight + "px";
     oWindows.style.width = window.innerWidth  + "px";
+
+    document.getElementById( 'tasks' ).style.width = window.innerWidth - document.getElementById( 'sysclock' ).offsetWidth - oTaskbar.getElementsByClassName( 'start-btn' )[0].offsetWidth-10 + "px";
 
     return oWindows;
 }

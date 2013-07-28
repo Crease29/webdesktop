@@ -13,7 +13,6 @@
     </head>
 
     <body>
-
         <div id="desktop-wrapper">
 
             <div id="taskbar">
@@ -68,6 +67,8 @@
                     </ul>
                 </div>
 
+                <ul id="tasks" class="pull-left"></ul>
+
                 <div id="sysclock" class="pull-right no-select"></div>
             </div> <!-- /#taskbar -->
 
@@ -82,10 +83,7 @@
         <script src="assets/js/desktopWindow.jquery.js"></script>
         <script type="text/javascript">
             $( document ).ready( function() {
-                $( '<div>' ).desktopWindow(
-                        {
-                        }
-                );
+                $( '<div>' ).desktopWindow();
             });
         </script>
     </body>

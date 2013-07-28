@@ -47,6 +47,7 @@
 
     desktopWindow.prototype = {
 
+        selfObject:    null,
         desktopWindow: null,
         iNormalWidth:  0,
         iNormalHeight: 0,
@@ -61,8 +62,10 @@
             // you can add more functions like the one below and
             // call them like so: this.yourOtherFunction(this.element, this.options).
 
-            this.element = $( this.element );
-            desktopWindow = this.element;
+            selfObject       = this;
+            this.element     = $( this.element );
+            desktopWin       = this.element;
+            this.taskbarElem = $( '<li>' );
 
             this.iNormalWidth  = this.options.width + 'px';
             this.iNormalHeight = this.options.height + 'px';
@@ -73,6 +76,7 @@
             this.setDimensions();
             this.initEvents();
             this.appendToDesktop();
+            this.addToTaskBar();
         },
 
         createNew: function() {
@@ -96,6 +100,9 @@
             {
                 var actionsMinimizeElem = document.createElement( 'div' );
                 actionsMinimizeElem.className = 'minimize';
+
+                $( actionsMinimizeElem ).click( function() { selfObject.minimize() });
+
                 actionsElem.appendChild( actionsMinimizeElem );
             }
 
@@ -104,22 +111,7 @@
                 var actionsMaximizeElem = document.createElement( 'div' );
                 actionsMaximizeElem.className = 'maximize';
 
-                $( actionsMaximizeElem ).click( function() {
-
-                    desktopWindow.removeAttr( 'style' );
-
-                    if( desktopWindow.hasClass( 'maximized') )
-                    {
-                        desktopWindow.css(
-                        {
-                            width: self.iNormalWidth,
-                            height: self.iNormalHeight,
-                            top: self.iNormalPosY,
-                            left: self.iNormalPosX
-                        } );
-                    }
-                    desktopWindow.toggleClass( 'maximized' );
-                });
+                $( actionsMaximizeElem ).click( function() { selfObject.maximize() });
 
                 actionsElem.appendChild( actionsMaximizeElem );
             }
@@ -129,7 +121,7 @@
                 var actionsCloseElem = document.createElement( 'div' );
                 actionsCloseElem.className = 'close';
 
-                $( actionsCloseElem ).click( function() { desktopWindow.remove() });
+                $( actionsCloseElem ).click( function() { selfObject.close() });
 
                 actionsElem.appendChild( actionsCloseElem );
             }
@@ -181,15 +173,77 @@
                 {
                     $( this ).addClass( 'shadowed' );
 
-                    self.iNormalPosY = desktopWindow[0].style.top;
-                    self.iNormalPosX = desktopWindow[0].style.left;
+                    selfObject.iNormalPosY = desktopWin[0].style.top;
+                    selfObject.iNormalPosX = desktopWin[0].style.left;
                 }
             } );
+
+            this.element.topbar.dblclick( function() { selfObject.maximize() });
+        },
+
+        minimize: function() {
+            this.element.animate(
+            {
+                top: '+=30',
+                opacity:0
+            }, 250, function() { desktopWin.addClass( 'minimized' ).hide() } );
+            this.taskbarElem.removeClass( 'active' );
+        },
+
+        maximize: function() {
+            this.element.removeAttr( 'style' );
+
+            if( this.element.hasClass( 'maximized') )
+            {
+                this.element.css(
+                    {
+                        width: selfObject.iNormalWidth,
+                        height: selfObject.iNormalHeight,
+                        top: selfObject.iNormalPosY,
+                        left: selfObject.iNormalPosX
+                    } );
+            }
+            this.element.toggleClass( 'maximized' );
+        },
+
+        close: function() {
+            this.element.remove();
+            this.taskbarElem.remove();
+        },
+
+        reopenFromTaskbar: function() {
+            this.element.removeClass( 'minimized' ).show().animate(
+            {
+                top: '-=30',
+                opacity:1
+            }, 250 );
+            this.taskbarElem.addClass( 'active' );
         },
 
         appendToDesktop: function()
         {
             $( '#windows' ).append( this.element );
+        },
+
+        addToTaskBar: function()
+        {
+            this.taskbarElem.addClass( 'active no-select' );
+            this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> ' + this.options.title );
+
+            this.taskbarElem.click( function()
+            {
+                desktopWin.stop( true, true );
+                if( desktopWin.hasClass( 'minimized' ) )
+                {
+                    selfObject.reopenFromTaskbar();
+                }
+                else
+                {
+                    selfObject.minimize();
+                }
+            } );
+
+            $( '#tasks' ).append( this.taskbarElem );
         }
     };
 
