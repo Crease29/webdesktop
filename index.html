@@ -77,13 +77,22 @@
         </div> <!-- /#desktop-wrapper -->
 
         <!-- le scripts -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
         <script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <script src="assets/js/desktop.js"></script>
         <script src="assets/js/desktopWindow.jquery.js"></script>
         <script type="text/javascript">
             $( document ).ready( function() {
-                $( '<div>' ).desktopWindow();
+                $( '<div>' ).desktopWindow(
+                {
+                    posY:50,
+                    posX:200
+                } );
+                $( '<div>' ).desktopWindow(
+                {
+                    posY:160,
+                    posX:650
+                } );
             });
         </script>
     </body>

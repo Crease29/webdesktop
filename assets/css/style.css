@@ -576,6 +576,7 @@ body {
 }
 #windows .window .view-content {
   height: 549px;
+  margin-top: 30px;
   overflow: auto;
 }
 #windows .window .bottombar {

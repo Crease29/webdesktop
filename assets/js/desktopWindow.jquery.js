@@ -22,6 +22,8 @@
             height:600,
             posX: 'center',
             posY: 'center',
+            contentType: 'HTML',
+            contentSource: 'test-content.html',
             actions: {
                 minimize: true,
                 maximize: true,
@@ -47,8 +49,6 @@
 
     desktopWindow.prototype = {
 
-        selfObject:    null,
-        desktopWindow: null,
         iNormalWidth:  0,
         iNormalHeight: 0,
         iNormalPosX:   0,
@@ -62,9 +62,7 @@
             // you can add more functions like the one below and
             // call them like so: this.yourOtherFunction(this.element, this.options).
 
-            selfObject       = this;
             this.element     = $( this.element );
-            desktopWin       = this.element;
             this.taskbarElem = $( '<li>' );
 
             this.iNormalWidth  = this.options.width + 'px';
@@ -75,11 +73,14 @@
             this.createNew();
             this.setDimensions();
             this.initEvents();
+            this.setContent();
             this.appendToDesktop();
             this.addToTaskBar();
         },
 
         createNew: function() {
+            var __this = this;
+
             this.element.addClass( 'window shadowed' );
 
             // Create topbar
@@ -101,7 +102,9 @@
                 var actionsMinimizeElem = document.createElement( 'div' );
                 actionsMinimizeElem.className = 'minimize';
 
-                $( actionsMinimizeElem ).click( function() { selfObject.minimize() });
+                $( actionsMinimizeElem ).click( function() {
+                    __this.minimize()
+                });
 
                 actionsElem.appendChild( actionsMinimizeElem );
             }
@@ -111,7 +114,7 @@
                 var actionsMaximizeElem = document.createElement( 'div' );
                 actionsMaximizeElem.className = 'maximize';
 
-                $( actionsMaximizeElem ).click( function() { selfObject.maximize() });
+                $( actionsMaximizeElem ).click( function() { __this.maximize() });
 
                 actionsElem.appendChild( actionsMaximizeElem );
             }
@@ -121,7 +124,7 @@
                 var actionsCloseElem = document.createElement( 'div' );
                 actionsCloseElem.className = 'close';
 
-                $( actionsCloseElem ).click( function() { selfObject.close() });
+                $( actionsCloseElem ).click( function() { __this.close() });
 
                 actionsElem.appendChild( actionsCloseElem );
             }
@@ -149,12 +152,14 @@
                 width:  this.iNormalWidth,
                 height: this.iNormalHeight,
                 top:    this.iNormalPosY,
-                left:   this.iNormalPosX
+                left:   this.iNormalPosX,
+                position: 'absolute'
             } );
         },
 
         initEvents: function()
         {
+            var __this = this;
             this.element.mousedown( function()
             {
                 if( this.style.zIndex != webdesktop.windows.zIndexer )
@@ -173,35 +178,40 @@
                 {
                     $( this ).addClass( 'shadowed' );
 
-                    selfObject.iNormalPosY = desktopWin[0].style.top;
-                    selfObject.iNormalPosX = desktopWin[0].style.left;
+                    __this.iNormalPosY = __this.element[0].style.top;
+                    __this.iNormalPosX = __this.element[0].style.left;
                 }
             } );
 
-            this.element.topbar.dblclick( function() { selfObject.maximize() });
+            this.element.topbar.dblclick( function() { __this.maximize() });
         },
 
         minimize: function() {
+            var __this = this;
+
             this.element.animate(
             {
                 top: '+=30',
                 opacity:0
-            }, 250, function() { desktopWin.addClass( 'minimized' ).hide() } );
+            }, 250, function() { $( this ).addClass( 'minimized' ).hide() } );
+
             this.taskbarElem.removeClass( 'active' );
         },
 
         maximize: function() {
+            var __this = this;
+
             this.element.removeAttr( 'style' );
 
             if( this.element.hasClass( 'maximized') )
             {
                 this.element.css(
-                    {
-                        width: selfObject.iNormalWidth,
-                        height: selfObject.iNormalHeight,
-                        top: selfObject.iNormalPosY,
-                        left: selfObject.iNormalPosX
-                    } );
+                {
+                    width: __this.iNormalWidth,
+                    height: __this.iNormalHeight,
+                    top: __this.iNormalPosY,
+                    left: __this.iNormalPosX
+                } );
             }
             this.element.toggleClass( 'maximized' );
         },
@@ -220,6 +230,25 @@
             this.taskbarElem.addClass( 'active' );
         },
 
+        setContent: function()
+        {
+            var __this = this;
+
+            if( this.options.contentSource.length > 0 )
+            {
+                $.ajax({
+                    type: "GET",
+                    url: this.options.contentSource,
+                    dataType: this.options.contentType,
+                    success: function( sData )
+                    {
+                        __this.element.viewContent.html( sData );
+                    }
+                    // ToDo: Add error handling
+                });
+            }
+        },
+
         appendToDesktop: function()
         {
             $( '#windows' ).append( this.element );
@@ -227,19 +256,21 @@
 
         addToTaskBar: function()
         {
+            var __this = this;
+
             this.taskbarElem.addClass( 'active no-select' );
             this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> ' + this.options.title );
 
             this.taskbarElem.click( function()
             {
-                desktopWin.stop( true, true );
-                if( desktopWin.hasClass( 'minimized' ) )
+                __this.element.stop( true, true );
+                if( __this.element.hasClass( 'minimized' ) )
                 {
-                    selfObject.reopenFromTaskbar();
+                    __this.reopenFromTaskbar();
                 }
                 else
                 {
-                    selfObject.minimize();
+                    __this.minimize();
                 }
             } );
 
