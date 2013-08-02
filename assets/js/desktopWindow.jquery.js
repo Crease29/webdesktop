@@ -165,6 +165,12 @@
                 if( this.style.zIndex != webdesktop.windows.zIndexer )
                 {
                     this.style.zIndex = ++webdesktop.windows.zIndexer;
+
+                    $( '#windows').find('.window.active' ).removeClass( 'active');
+                    __this.element.addClass( 'active' );
+
+                    $( '#tasks').find('li.active' ).removeClass( 'active');
+                    __this.taskbarElem.addClass( 'active' );
                 }
             }).draggable(
             {
@@ -193,7 +199,7 @@
             {
                 top: '+=30',
                 opacity:0
-            }, 250, function() { $( this ).addClass( 'minimized' ).hide() } );
+            }, 250, function() { $( this ).addClass( 'minimized' ).hide() } ).removeClass( 'active' );
 
             this.taskbarElem.removeClass( 'active' );
         },
@@ -210,10 +216,11 @@
                     width: __this.iNormalWidth,
                     height: __this.iNormalHeight,
                     top: __this.iNormalPosY,
-                    left: __this.iNormalPosX
+                    left: __this.iNormalPosX,
+
                 } );
             }
-            this.element.toggleClass( 'maximized' );
+            this.element.toggleClass( 'maximized' ).css( 'zIndex', ++webdesktop.windows.zIndexer );
         },
 
         close: function() {
@@ -222,11 +229,13 @@
         },
 
         reopenFromTaskbar: function() {
+            $( '#windows').find('.window.active' ).removeClass( 'active');
+
             this.element.removeClass( 'minimized' ).show().animate(
             {
                 top: '-=30',
                 opacity:1
-            }, 250 );
+            }, 250 ).css( 'zIndex', ++webdesktop.windows.zIndexer ).addClass( 'active' );
             this.taskbarElem.addClass( 'active' );
         },
 
