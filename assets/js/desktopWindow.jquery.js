@@ -20,6 +20,10 @@
             resizable: false,
             width: 800,
             height:600,
+            minWidth: 300,
+            minHeight: 200,
+            maxWidth: null,
+            maxHeight: null,
             posX: 'center',
             posY: 'center',
             contentType: 'HTML',
@@ -27,7 +31,8 @@
             actions: {
                 minimize: true,
                 maximize: true,
-                close: true
+                close: true,
+                resize: true
             }
         };
 
@@ -62,8 +67,8 @@
             // you can add more functions like the one below and
             // call them like so: this.yourOtherFunction(this.element, this.options).
 
-            this.element     = $( this.element );
-            this.taskbarElem = $( '<li>' );
+            this.element       = $( this.element );
+            this.taskbarElem   = $( '<li>' );
 
             this.iNormalWidth  = this.options.width + 'px';
             this.iNormalHeight = this.options.height + 'px';
@@ -79,14 +84,13 @@
         },
 
         createNew: function() {
-            var __this = this;
-
             this.element.addClass( 'window shadowed' );
 
             // Create topbar
             this.element.topbar = $( '<div>' ).addClass( 'topbar no-select' );
 
-            var iconElem = document.createElement( 'div' ),
+            var __this = this,
+                iconElem = document.createElement( 'div' ),
                 titleElem = document.createElement( 'div' ),
                 actionsElem = document.createElement( 'div' );
 
@@ -134,6 +138,10 @@
             // Create view-content
             this.element.viewContent = $( '<div>' ).addClass( 'view-content' );
 
+            // Create Loading Screen
+            this.element.viewContent.loadingScreen = $( '<div>' ).addClass( 'loading-screen' );
+            this.element.viewContent.append( this.element.viewContent.loadingScreen );
+
             // Create bottombar
             this.element.bottombar = $( '<div>' ).addClass( 'bottombar' );
 
@@ -162,16 +170,7 @@
             var __this = this;
             this.element.mousedown( function()
             {
-                if( this.style.zIndex != webdesktop.windows.zIndexer )
-                {
-                    this.style.zIndex = ++webdesktop.windows.zIndexer;
-
-                    $( '#windows').find('.window.active' ).removeClass( 'active');
-                    __this.element.addClass( 'active' );
-
-                    $( '#tasks').find('li.active' ).removeClass( 'active');
-                    __this.taskbarElem.addClass( 'active' );
-                }
+                __this.focus();
             }).draggable(
             {
                 handle: this.element.topbar,
@@ -189,12 +188,21 @@
                 }
             } );
 
+            if( this.options.actions.resize )
+            {
+                this.element.resizable(
+                {
+                    minWidth: this.options.minWidth,
+                    minHeight: this.options.minHeight,
+                    maxWidth: this.options.maxWidth,
+                    maxHeight: this.options.maxHeight
+                } );
+            }
+
             this.element.topbar.dblclick( function() { __this.maximize() });
         },
 
         minimize: function() {
-            var __this = this;
-
             this.element.animate(
             {
                 top: '+=30',
@@ -239,24 +247,81 @@
             this.taskbarElem.addClass( 'active' );
         },
 
-        setContent: function()
+        setTitle: function( sTitle )
+        {
+            this.element.topbar.find( '.title' ).text( sTitle );
+            this.taskbarElem.find( '.title' ).text( sTitle );
+
+            return this;
+        },
+
+        setContent: function( sUrl, sContentType, sRequestType )
         {
             var __this = this;
 
+            this.options.contentSource  = sUrl || this.options.contentSource;
+            this.options.contentType    = sContentType || this.options.contentType;
+
             if( this.options.contentSource.length > 0 )
             {
+                this.showLoadingScreen();
+
                 $.ajax({
-                    type: "GET",
+                    type: sRequestType || "GET",
                     url: this.options.contentSource,
                     dataType: this.options.contentType,
                     success: function( sData )
                     {
-                        __this.element.viewContent.html( sData );
+                        var oCont = $( '<div>' + sData + '</div>' );
+
+                        __this.element.viewContent.html( $( 'div.content:first-child', oCont ) ).prepend( __this.element.viewContent.loadingScreen );
+                        __this.evalScripts( $( 'script', oCont ) );
+                        __this.hideLoadingScreen();
                     }
                     // ToDo: Add error handling
                 });
             }
         },
+
+        evalScripts: function( aScriptElems )
+        {
+            if( aScriptElems.length > 0 )
+            {
+                var oWin = this; // Will be used in evaled scripts
+                $.each( aScriptElems, function()
+                {
+                    try
+                    {
+                        eval( this.innerHTML );
+                    } catch ( e )
+                    {
+                        if ( typeof console != 'undefined' && typeof console.error != 'undefined' )
+                        {
+                            console.error( e );
+                        }
+                    }
+                    $( this ).remove();
+                } );
+            }
+        },
+
+        focus: function()
+        {
+            if( this.element[0].style.zIndex != webdesktop.windows.zIndexer )
+            {
+                this.element[0].style.zIndex = ++webdesktop.windows.zIndexer;
+
+                $( '#windows').find('.window.active' ).removeClass( 'active');
+                this.element.addClass( 'active' );
+
+                $( '#tasks').find('li.active' ).removeClass( 'active');
+                this.taskbarElem.addClass( 'active' );
+            }
+        },
+
+        showLoadingScreen: function() { this.element.viewContent.loadingScreen.show() },
+        hideLoadingScreen: function() { this.element.viewContent.loadingScreen.hide() },
+        toggleLoadingScreen: function() { this.element.viewContent.loadingScreen.toggle() },
 
         appendToDesktop: function()
         {
@@ -268,7 +333,7 @@
             var __this = this;
 
             this.taskbarElem.addClass( 'active no-select' );
-            this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> ' + this.options.title );
+            this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> <span class="title">' + this.options.title + '</span>');
 
             this.taskbarElem.click( function()
             {
@@ -279,7 +344,14 @@
                 }
                 else
                 {
-                    __this.minimize();
+                    if( __this.element[0].style.zIndex != webdesktop.windows.zIndexer )
+                    {
+                        __this.focus();
+                    }
+                    else
+                    {
+                        __this.minimize();
+                    }
                 }
             } );
 
@@ -291,8 +363,8 @@
     // preventing against multiple instantiations
     $.fn[ pluginName ] = function ( options ) {
         return this.each( function () {
-            if ( !$.data( this, "plugin_" + pluginName ) ) {
-                $.data( this, "plugin_" + pluginName, new desktopWindow( this, options ) );
+            if ( !$.data( this, pluginName ) ) {
+                $.data( this, pluginName, new desktopWindow( this, options ) );
             }
         } );
     };

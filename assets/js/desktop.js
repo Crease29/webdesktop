@@ -20,6 +20,7 @@ recalcWindowPlayground();
 
 window.onresize = function(event) { recalcWindowPlayground() }
 
+// Desktop-Clock
 function updateClock() {
     var oElem = document.getElementById( 'sysclock' );
     if( typeof oElem != 'undefined' )
@@ -41,3 +42,12 @@ function updateClock() {
 }
 updateClock();
 window.setInterval( updateClock, 999 );
+
+$( document ).ready( function()
+{
+    // Set window to active that is in front
+    window.setTimeout( function()
+    {
+        $( '#windows' ).find( '.window:last-child' ).data( 'desktopWindow' ).focus();
+    }, 200);
+});
