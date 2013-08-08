@@ -30,6 +30,7 @@
             contentSource: 'test-content.html',
             contentSelector: 'div.content:first-child',
             actions: {
+                reload: true,
                 minimize: true,
                 maximize: true,
                 close: true,
@@ -101,6 +102,18 @@
             titleElem.innerHTML   = this.options.title;
 
             actionsElem.className = 'actions pull-right';
+
+            if( this.options.actions.reload )
+            {
+                var actionsReloadElem = document.createElement( 'div' );
+                actionsReloadElem.className = 'reload';
+
+                $( actionsReloadElem ).click( function() {
+                    __this.setContent()
+                });
+
+                actionsElem.appendChild( actionsReloadElem );
+            }
 
             if( this.options.actions.minimize )
             {
@@ -175,7 +188,7 @@
             }).draggable(
             {
                 handle: this.element.topbar,
-                cancel: '.minimize, .maximize, .close',
+                cancel: '.reload, .minimize, .maximize, .close',
                 start: function()
                 {
                     $( this ).removeClass( 'shadowed' );
@@ -206,7 +219,12 @@
                 } );
             }
 
-            this.element.topbar.dblclick( function() { __this.maximize() });
+            this.element.topbar.dblclick( function( e ) {
+                if( !/reload|minimize|maximize|close/.test( e.target.className ) )
+                {
+                    __this.maximize()
+                }
+            });
         },
 
         minimize: function() {

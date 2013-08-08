@@ -511,6 +511,7 @@ body {
   color: #fff;
   cursor: default;
 }
+#windows .window .topbar .actions .reload,
 #windows .window .topbar .actions .minimize,
 #windows .window .topbar .actions .maximize,
 #windows .window .topbar .actions .close {
@@ -527,6 +528,7 @@ body {
   -o-border-radius: 3px;
   border-radius: 3px;
 }
+#windows .window .topbar .actions .reload:before,
 #windows .window .topbar .actions .minimize:before,
 #windows .window .topbar .actions .maximize:before,
 #windows .window .topbar .actions .close:before {
@@ -542,6 +544,12 @@ body {
   text-shadow: -1px 1px 0 #ffffff;
   filter: dropshadow(color=#ffffff, offx=-1px, offy=1px);
 }
+#windows .window .topbar .actions .reload:before {
+  height: 14px;
+  padding-top: 4px;
+  content: "\f021";
+  font-size: 12px;
+}
 #windows .window .topbar .actions .minimize:before {
   height: 14px;
   padding-top: 4px;
@@ -554,6 +562,7 @@ body {
   content: "\f0b2";
   font-size: 14px;
 }
+#windows .window .topbar .actions .reload,
 #windows .window .topbar .actions .minimize,
 #windows .window .topbar .actions .maximize {
   border-color: #d9d9d9;
@@ -567,6 +576,7 @@ body {
   background: linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e5e5e5', GradientType=0);
 }
+#windows .window .topbar .actions .reload:before,
 #windows .window .topbar .actions .minimize:before,
 #windows .window .topbar .actions .maximize:before {
   color: #333;

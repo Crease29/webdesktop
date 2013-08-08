@@ -347,6 +347,7 @@ body {
                 cursor:default;
             }
             .actions {
+                .reload,
                 .minimize,
                 .maximize,
                 .close {
@@ -373,6 +374,15 @@ body {
                     }
                 }
 
+                .reload {
+                    &:before {
+                        height:14px;
+                        padding-top:4px;
+                        content:"\f021";
+                        font-size:12px;
+                    }
+                }
+
                 .minimize {
                     &:before {
                         height:14px;
@@ -391,6 +401,7 @@ body {
                     }
                 }
 
+                .reload,
                 .minimize,
                 .maximize {
                     border-color:darken( #ffffff, 15% );
