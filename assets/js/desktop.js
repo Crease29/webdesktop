@@ -9,20 +9,26 @@ function recalcWindowPlayground()
 {
     var oWindows = document.getElementById( 'windows' ),
         oTaskbar = document.getElementById( 'taskbar' );
-    oWindows.style.height = window.innerHeight - document.getElementById( 'taskbar' ).offsetHeight + "px";
-    oWindows.style.width = window.innerWidth  + "px";
 
-    document.getElementById( 'tasks' ).style.width = window.innerWidth - document.getElementById( 'sysclock' ).offsetWidth - oTaskbar.getElementsByClassName( 'start-btn' )[0].offsetWidth-10 + "px";
+    oWindows.style.height = window.innerHeight - document.getElementById( 'taskbar' ).offsetHeight + "px";
+    oWindows.style.width = window.innerWidth + "px";
+
+    document.getElementById( 'tasks' ).style.width = window.innerWidth - document.getElementById( 'sysclock' ).offsetWidth - oTaskbar.getElementsByClassName( 'start-btn' )[0].offsetWidth - 10 + "px";
 
     return oWindows;
 }
 recalcWindowPlayground();
 
-window.onresize = function(event) { recalcWindowPlayground() }
+window.onresize = function( event )
+{
+    recalcWindowPlayground()
+}
 
 // Desktop-Clock
-function updateClock() {
+function updateClock()
+{
     var oElem = document.getElementById( 'sysclock' );
+
     if( typeof oElem != 'undefined' )
     {
         var oDate = new Date(),
@@ -30,7 +36,7 @@ function updateClock() {
             oElemDate = document.createElement( 'span' );
 
         oElemTime.className = 'time';
-        oElemTime.textContent = oDate.toTimeString().replace(/.*(\d{2}:\d{2})(:\d{2}).*/, "$1");
+        oElemTime.textContent = oDate.toTimeString().replace( /.*(\d{2}:\d{2})(:\d{2}).*/, "$1" );
 
         oElemDate.className = 'date';
         oElemDate.textContent = ( oDate.getDate() < 10 ? '0' : null ) + oDate.getDate() + '.' + ( oDate.getMonth() < 10 ? '0' : null ) + oDate.getMonth() + '.' + oDate.getFullYear();
@@ -43,11 +49,14 @@ function updateClock() {
 updateClock();
 window.setInterval( updateClock, 999 );
 
-$( document ).ready( function()
-{
-    // Set window to active that is in front
-    window.setTimeout( function()
+$( document ).ready(
+    function()
     {
-        $( '#windows' ).find( '.window:last-child' ).data( 'desktopWindow' ).focus();
-    }, 200);
-});
+        // Set window to active that is in front
+        window.setTimeout(
+            function()
+            {
+                $( '#windows' ).find( '.window:last-child' ).data( 'desktopWindow' ).focus();
+            },
+            200 );
+    } );

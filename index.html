@@ -82,18 +82,21 @@
         <script src="assets/js/desktop.js"></script>
         <script src="assets/js/desktopWindow.jquery.js"></script>
         <script type="text/javascript">
-            $( document ).ready( function() {
-                $( '<div>' ).desktopWindow(
+            $( document ).ready(
+                function()
                 {
-                    posY:50,
-                    posX:200
-                } );
-                $( '<div>' ).desktopWindow(
-                {
-                    posY:160,
-                    posX:650
-                } );
-            });
+                    $( '<div>' ).desktopWindow(
+                        {
+                            posY: 50,
+                            posX: 200
+                        } );
+                    $( '<div>' ).desktopWindow(
+                        {
+                            posY: 160,
+                            posX: 650
+                        } );
+                }
+            );
         </script>
     </body>
 </html>

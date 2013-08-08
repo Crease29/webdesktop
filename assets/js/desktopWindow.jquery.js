@@ -1,7 +1,7 @@
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;
-(function ( $, window, document, undefined )
+(function( $, window, document, undefined )
 {
 
     // undefined is used here as the undefined global variable in ECMAScript 3 is
@@ -63,7 +63,7 @@
         iNormalPosX:   0,
         iNormalPosY:   0,
 
-        init: function ()
+        init: function()
         {
             // Place initialization logic here
             // You already have access to the DOM element and
@@ -88,7 +88,7 @@
             this.addToTaskBar();
         },
 
-        createNew: function ()
+        createNew: function()
         {
             this.element.addClass( 'window shadowed' );
 
@@ -107,54 +107,58 @@
 
             actionsElem.className = 'actions pull-right';
 
-            if ( this.options.actions.reload )
+            if( this.options.actions.reload )
             {
                 var actionsReloadElem = document.createElement( 'div' );
                 actionsReloadElem.className = 'reload';
 
-                $( actionsReloadElem ).click( function ()
-                                              {
-                                                  __this.setContent()
-                                              } );
+                $( actionsReloadElem ).click(
+                    function()
+                    {
+                        __this.setContent()
+                    } );
 
                 actionsElem.appendChild( actionsReloadElem );
             }
 
-            if ( this.options.actions.minimize )
+            if( this.options.actions.minimize )
             {
                 var actionsMinimizeElem = document.createElement( 'div' );
                 actionsMinimizeElem.className = 'minimize';
 
-                $( actionsMinimizeElem ).click( function ()
-                                                {
-                                                    __this.minimize()
-                                                } );
+                $( actionsMinimizeElem ).click(
+                    function()
+                    {
+                        __this.minimize()
+                    } );
 
                 actionsElem.appendChild( actionsMinimizeElem );
             }
 
-            if ( this.options.actions.maximize )
+            if( this.options.actions.maximize )
             {
                 var actionsMaximizeElem = document.createElement( 'div' );
                 actionsMaximizeElem.className = 'maximize';
 
-                $( actionsMaximizeElem ).click( function ()
-                                                {
-                                                    __this.maximize()
-                                                } );
+                $( actionsMaximizeElem ).click(
+                    function()
+                    {
+                        __this.maximize()
+                    } );
 
                 actionsElem.appendChild( actionsMaximizeElem );
             }
 
-            if ( this.options.actions.close )
+            if( this.options.actions.close )
             {
                 var actionsCloseElem = document.createElement( 'div' );
                 actionsCloseElem.className = 'close';
 
-                $( actionsCloseElem ).click( function ()
-                                             {
-                                                 __this.close()
-                                             } );
+                $( actionsCloseElem ).click(
+                    function()
+                    {
+                        __this.close()
+                    } );
 
                 actionsElem.appendChild( actionsCloseElem );
             }
@@ -174,7 +178,7 @@
             this.element.append( this.element.topbar, this.element.viewContent, this.element.bottombar );
         },
 
-        setDimensions: function ()
+        setDimensions: function()
         {
             var oWindows = document.getElementById( 'windows' );
 
@@ -191,21 +195,22 @@
                 } );
         },
 
-        initEvents: function ()
+        initEvents: function()
         {
             var __this = this;
-            this.element.mousedown(function ()
-                                   {
-                                       __this.focus();
-                                   } ).draggable(
+            this.element.mousedown(
+                function()
+                {
+                    __this.focus();
+                } ).draggable(
                 {
                     handle: this.element.topbar,
                     cancel: '.reload, .minimize, .maximize, .close',
-                    start:  function ()
+                    start:  function()
                     {
                         $( this ).removeClass( 'shadowed' );
                     },
-                    stop:   function ()
+                    stop:   function()
                     {
                         $( this ).addClass( 'shadowed' );
 
@@ -214,7 +219,7 @@
                     }
                 } );
 
-            if ( this.options.actions.resize )
+            if( this.options.actions.resize )
             {
                 var __this = this;
                 this.element.resizable(
@@ -223,7 +228,7 @@
                         minHeight: this.options.minHeight,
                         maxWidth:  this.options.maxWidth,
                         maxHeight: this.options.maxHeight,
-                        stop:      function ( e, o )
+                        stop:      function( e, o )
                         {
                             __this.iNormalWidth = o.size.width + "px";
                             __this.iNormalHeight = o.size.height + "px";
@@ -231,22 +236,23 @@
                     } );
             }
 
-            this.element.topbar.dblclick( function ( e )
-                                          {
-                                              if ( !/reload|minimize|maximize|close/.test( e.target.className ) )
-                                              {
-                                                  __this.maximize()
-                                              }
-                                          } );
+            this.element.topbar.dblclick(
+                function( e )
+                {
+                    if( !/reload|minimize|maximize|close/.test( e.target.className ) )
+                    {
+                        __this.maximize()
+                    }
+                } );
         },
 
-        minimize: function ()
+        minimize: function()
         {
             this.element.animate(
                 {
                     top:     '+=30',
                     opacity: 0
-                }, 250,function ()
+                }, 250,function()
                 {
                     $( this ).addClass( 'minimized' ).hide()
                 } ).removeClass( 'active' );
@@ -254,14 +260,14 @@
             this.taskbarElem.removeClass( 'active' );
         },
 
-        maximize: function ()
+        maximize: function()
         {
             var __this = this,
                 isMaximized = this.element.hasClass( 'maximized' );
 
             this.element.removeAttr( 'style' );
 
-            if ( isMaximized )
+            if( isMaximized )
             {
                 this.element.css(
                     {
@@ -274,7 +280,7 @@
 
             this.element.draggable( isMaximized ? 'enable' : 'disable' );
 
-            if ( this.options.resizable )
+            if( this.options.resizable )
             {
                 this.element.resizable( isMaximized ? 'enable' : 'disable' ).find( '.ui-resizable-handle' ).toggle();
             }
@@ -282,13 +288,13 @@
             this.element.toggleClass( 'maximized' ).css( 'zIndex', ++webdesktop.windows.zIndexer );
         },
 
-        close: function ()
+        close: function()
         {
             this.element.remove();
             this.taskbarElem.remove();
         },
 
-        reopenFromTaskbar: function ()
+        reopenFromTaskbar: function()
         {
             $( '#windows' ).find( '.window.active' ).removeClass( 'active' );
 
@@ -300,7 +306,7 @@
             this.taskbarElem.addClass( 'active' );
         },
 
-        setTitle: function ( sTitle )
+        setTitle: function( sTitle )
         {
             this.element.topbar.find( '.title' ).text( sTitle );
             this.taskbarElem.find( '.title' ).text( sTitle );
@@ -308,7 +314,7 @@
             return this;
         },
 
-        setContent: function ( sUrl, sContentType, sRequestType, sContentSelector )
+        setContent: function( sUrl, sContentType, sRequestType, sContentSelector )
         {
             var __this = this;
 
@@ -316,7 +322,7 @@
             this.options.contentType = sContentType || this.options.contentType;
             this.options.contentSelector = sContentSelector || this.options.contentSelector;
 
-            if ( this.options.contentSource.length > 0 )
+            if( this.options.contentSource.length > 0 )
             {
                 this.showLoadingScreen();
 
@@ -324,7 +330,7 @@
                             type: sRequestType || "GET",
                             url:      this.options.contentSource,
                             dataType: this.options.contentType,
-                            success:  function ( sData )
+                            success:  function( sData )
                             {
                                 var oCont = $( '<div>' + sData + '</div>' );
 
@@ -338,46 +344,48 @@
             }
         },
 
-        initContentElementEvents: function ()
+        initContentElementEvents: function()
         {
             var __this = this;
 
-            this.element.viewContent.find( 'a:not([target="_blank"],[href^="javascript:"])' ).click( function ( e )
-                                                                                                     {
-                                                                                                         e.preventDefault();
+            this.element.viewContent.find( 'a:not([target="_blank"],[href^="javascript:"])' ).click(
+                function( e )
+                {
+                    e.preventDefault();
 
-                                                                                                         var sContentSelector = this.getAttribute( 'data-content-selector' );
+                    var sContentSelector = this.getAttribute( 'data-content-selector' );
 
-                                                                                                         __this.setContent( this.href, 'HTML', 'GET', sContentSelector );
-                                                                                                     } );
+                    __this.setContent( this.href, 'HTML', 'GET', sContentSelector );
+                } );
         },
 
-        evalScripts: function ( aScriptElems )
+        evalScripts: function( aScriptElems )
         {
-            if ( aScriptElems.length > 0 )
+            if( aScriptElems.length > 0 )
             {
                 var oWin = this; // Will be used in evaled scripts
-                $.each( aScriptElems, function ()
-                {
-                    try
-                    {
-                        eval( this.innerHTML );
-                    }
-                    catch ( e )
-                    {
-                        if ( typeof console != 'undefined' && typeof console.error != 'undefined' )
+                $.each( aScriptElems,
+                        function()
                         {
-                            console.error( e );
-                        }
-                    }
-                    $( this ).remove();
-                } );
+                            try
+                            {
+                                eval( this.innerHTML );
+                            }
+                            catch( e )
+                            {
+                                if( typeof console != 'undefined' && typeof console.error != 'undefined' )
+                                {
+                                    console.error( e );
+                                }
+                            }
+                            $( this ).remove();
+                        } );
             }
         },
 
-        focus: function ()
+        focus: function()
         {
-            if ( this.element[0].style.zIndex != webdesktop.windows.zIndexer )
+            if( this.element[0].style.zIndex != webdesktop.windows.zIndexer )
             {
                 this.element[0].style.zIndex = ++webdesktop.windows.zIndexer;
 
@@ -389,50 +397,51 @@
             }
         },
 
-        showLoadingScreen:   function ()
+        showLoadingScreen:   function()
         {
             this.element.viewContent.loadingScreen.show()
         },
-        hideLoadingScreen:   function ()
+        hideLoadingScreen:   function()
         {
             this.element.viewContent.loadingScreen.hide()
         },
-        toggleLoadingScreen: function ()
+        toggleLoadingScreen: function()
         {
             this.element.viewContent.loadingScreen.toggle()
         },
 
-        appendToDesktop: function ()
+        appendToDesktop: function()
         {
             $( '#windows' ).append( this.element );
         },
 
-        addToTaskBar: function ()
+        addToTaskBar: function()
         {
             var __this = this;
 
             this.taskbarElem.addClass( 'active no-select' );
             this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> <span class="title">' + this.options.title + '</span>' );
 
-            this.taskbarElem.click( function ()
-                                    {
-                                        __this.element.stop( true, true );
-                                        if ( __this.element.hasClass( 'minimized' ) )
-                                        {
-                                            __this.reopenFromTaskbar();
-                                        }
-                                        else
-                                        {
-                                            if ( __this.element[0].style.zIndex != webdesktop.windows.zIndexer )
-                                            {
-                                                __this.focus();
-                                            }
-                                            else
-                                            {
-                                                __this.minimize();
-                                            }
-                                        }
-                                    } );
+            this.taskbarElem.click(
+                function()
+                {
+                    __this.element.stop( true, true );
+                    if( __this.element.hasClass( 'minimized' ) )
+                    {
+                        __this.reopenFromTaskbar();
+                    }
+                    else
+                    {
+                        if( __this.element[0].style.zIndex != webdesktop.windows.zIndexer )
+                        {
+                            __this.focus();
+                        }
+                        else
+                        {
+                            __this.minimize();
+                        }
+                    }
+                } );
 
             $( '#tasks' ).append( this.taskbarElem );
         }
@@ -440,15 +449,16 @@
 
     // A really lightweight plugin wrapper around the constructor,
     // preventing against multiple instantiations
-    $.fn[ pluginName ] = function ( options )
+    $.fn[ pluginName ] = function( options )
     {
-        return this.each( function ()
-                          {
-                              if ( !$.data( this, pluginName ) )
-                              {
-                                  $.data( this, pluginName, new desktopWindow( this, options ) );
-                              }
-                          } );
+        return this.each(
+            function()
+            {
+                if( !$.data( this, pluginName ) )
+                {
+                    $.data( this, pluginName, new desktopWindow( this, options ) );
+                }
+            } );
     };
 
 })( jQuery, window, document );
