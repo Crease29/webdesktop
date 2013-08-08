@@ -17,7 +17,7 @@
         defaults = {
             icon: 'icon-desktop',
             title: 'New Window',
-            resizable: false,
+            resizable: true,
             width: 800,
             height:600,
             minWidth: 300,
@@ -28,6 +28,7 @@
             posY: 'center',
             contentType: 'HTML',
             contentSource: 'test-content.html',
+            contentSelector: 'div.content:first-child',
             actions: {
                 minimize: true,
                 maximize: true,
@@ -190,12 +191,18 @@
 
             if( this.options.actions.resize )
             {
+                var __this = this;
                 this.element.resizable(
                 {
                     minWidth: this.options.minWidth,
                     minHeight: this.options.minHeight,
                     maxWidth: this.options.maxWidth,
-                    maxHeight: this.options.maxHeight
+                    maxHeight: this.options.maxHeight,
+                    stop: function( e, o )
+                    {
+                        __this.iNormalWidth  = o.size.width + "px";
+                        __this.iNormalHeight = o.size.height + "px";
+                    }
                 } );
             }
 
@@ -213,21 +220,29 @@
         },
 
         maximize: function() {
-            var __this = this;
+            var __this = this,
+                isMaximized = this.element.hasClass( 'maximized');
 
             this.element.removeAttr( 'style' );
 
-            if( this.element.hasClass( 'maximized') )
+            if( isMaximized )
             {
                 this.element.css(
                 {
-                    width: __this.iNormalWidth,
-                    height: __this.iNormalHeight,
-                    top: __this.iNormalPosY,
-                    left: __this.iNormalPosX,
-
+                    width: this.iNormalWidth,
+                    height: this.iNormalHeight,
+                    top: this.iNormalPosY,
+                    left: this.iNormalPosX
                 } );
             }
+
+            this.element.draggable( isMaximized ? 'enable' : 'disable' );
+
+            if( this.options.resizable )
+            {
+                this.element.resizable( isMaximized ? 'enable' : 'disable' ).find( '.ui-resizable-handle' ).toggle();
+            }
+
             this.element.toggleClass( 'maximized' ).css( 'zIndex', ++webdesktop.windows.zIndexer );
         },
 
@@ -255,12 +270,13 @@
             return this;
         },
 
-        setContent: function( sUrl, sContentType, sRequestType )
+        setContent: function( sUrl, sContentType, sRequestType, sContentSelector )
         {
             var __this = this;
 
-            this.options.contentSource  = sUrl || this.options.contentSource;
-            this.options.contentType    = sContentType || this.options.contentType;
+            this.options.contentSource   = sUrl || this.options.contentSource;
+            this.options.contentType     = sContentType || this.options.contentType;
+            this.options.contentSelector = sContentSelector || this.options.contentSelector;
 
             if( this.options.contentSource.length > 0 )
             {
@@ -274,13 +290,28 @@
                     {
                         var oCont = $( '<div>' + sData + '</div>' );
 
-                        __this.element.viewContent.html( $( 'div.content:first-child', oCont ) ).prepend( __this.element.viewContent.loadingScreen );
+                        __this.element.viewContent.html( $( __this.options.contentSelector, oCont ) ).prepend( __this.element.viewContent.loadingScreen );
+                        __this.initContentElementEvents();
                         __this.evalScripts( $( 'script', oCont ) );
                         __this.hideLoadingScreen();
                     }
                     // ToDo: Add error handling
                 });
             }
+        },
+
+        initContentElementEvents: function()
+        {
+            var __this = this;
+
+            this.element.viewContent.find( 'a:not([target="_blank"],[href^="javascript:"])' ).click( function( e )
+            {
+                e.preventDefault();
+
+                var sContentSelector = this.getAttribute( 'data-content-selector' );
+
+                __this.setContent( this.href, 'HTML', 'GET', sContentSelector );
+            });
         },
 
         evalScripts: function( aScriptElems )
