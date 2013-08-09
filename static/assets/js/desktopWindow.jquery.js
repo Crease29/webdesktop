@@ -424,7 +424,7 @@
             this.options.contentType = sContentType || this.options.contentType;
             this.options.contentSelector = sContentSelector || this.options.contentSelector;
 
-            if( this.options.contentSource.length > 0 )
+            if( this.options.contentSource.length )
             {
                 this.showLoadingScreen();
 
@@ -474,7 +474,7 @@
          */
         evalScripts: function( aScriptElems )
         {
-            if( aScriptElems.length > 0 )
+            if( aScriptElems.length )
             {
                 var oWin = this; // Can be accessed in evaled scripts
 
