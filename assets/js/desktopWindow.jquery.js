@@ -133,17 +133,15 @@
             // Create topbar
             this.element.topbar = $( '<div>' ).addClass( 'topbar no-select' );
 
-            var __this = this,
-                iconElem = document.createElement( 'div' ),
-                titleElem = document.createElement( 'div' ),
-                actionsElem = document.createElement( 'div' );
+            var __this = this;
 
-            iconElem.className = 'icon ' + this.options.icon;
+            this.element.topbar.iconElem = document.createElement( 'div' );
+            this.element.topbar.titleElem = document.createElement( 'div' );
+            this.element.topbar.actionsElem = document.createElement( 'div' );
 
-            titleElem.className = 'title';
-            titleElem.innerHTML = this.options.title;
+            this.element.topbar.titleElem.className = 'title';
 
-            actionsElem.className = 'actions pull-right';
+            this.element.topbar.actionsElem.className = 'actions pull-right';
 
             /**
              * Create reload action button.
@@ -159,7 +157,7 @@
                         __this.setContent()
                     } );
 
-                actionsElem.appendChild( actionsReloadElem );
+                this.element.topbar.actionsElem.appendChild( actionsReloadElem );
             }
 
             /**
@@ -176,7 +174,7 @@
                         __this.minimize()
                     } );
 
-                actionsElem.appendChild( actionsMinimizeElem );
+                this.element.topbar.actionsElem.appendChild( actionsMinimizeElem );
             }
 
             /**
@@ -193,7 +191,7 @@
                         __this.maximize()
                     } );
 
-                actionsElem.appendChild( actionsMaximizeElem );
+                this.element.topbar.actionsElem.appendChild( actionsMaximizeElem );
             }
 
             /**
@@ -210,11 +208,13 @@
                         __this.close()
                     } );
 
-                actionsElem.appendChild( actionsCloseElem );
+                this.element.topbar.actionsElem.appendChild( actionsCloseElem );
             }
 
             // append configured elements to the topbar element
-            this.element.topbar.append( iconElem, titleElem, actionsElem );
+            this.element.topbar.append( this.element.topbar.iconElem,
+                                        this.element.topbar.titleElem,
+                                        this.element.topbar.actionsElem );
 
             // Create view-content
             this.element.viewContent = $( '<div>' ).addClass( 'view-content' );
@@ -384,8 +384,25 @@
          */
         setTitle: function( sTitle )
         {
-            this.element.topbar.find( '.title' ).text( sTitle );
-            this.taskbarElem.find( '.title' ).text( sTitle );
+            var sTitle = sTitle || this.options.title;
+
+            this.element.topbar.titleElem.innerText = sTitle;
+            this.taskbarElem.titleElem.innerText = sTitle;
+
+            return this;
+        },
+
+        /**
+         * Sets the icon of the window
+         * @param sIcon
+         * @returns {*}
+         */
+        setIcon: function( sIcon )
+        {
+            var sClassName = 'icon ' + ( sIcon || this.options.icon );
+
+            this.element.topbar.iconElem.className = sClassName;
+            this.taskbarElem.iconElem.className = sClassName;
 
             return this;
         },
@@ -459,7 +476,8 @@
         {
             if( aScriptElems.length > 0 )
             {
-                var oWin = this; // Will be used in evaled scripts
+                var oWin = this; // Can be accessed in evaled scripts
+
                 $.each( aScriptElems,
                         function()
                         {
@@ -499,7 +517,7 @@
         /**
          * Shows the loading overlay in the window.
          */
-        showLoadingScreen:   function()
+        showLoadingScreen: function()
         {
             this.element.viewContent.loadingScreen.show()
         },
@@ -507,7 +525,7 @@
         /**
          * Hides the loading overlay in the window.
          */
-        hideLoadingScreen:   function()
+        hideLoadingScreen: function()
         {
             this.element.viewContent.loadingScreen.hide()
         },
@@ -535,8 +553,15 @@
         {
             var __this = this;
 
+            this.taskbarElem.iconElem = document.createElement( 'i' );
+            this.setIcon();
+
+            this.taskbarElem.titleElem = document.createElement( 'span' );
+            this.taskbarElem.titleElem.className = 'title';
+            this.setTitle();
+
             this.taskbarElem.addClass( 'active no-select' );
-            this.taskbarElem.append( '<i class="icon ' + this.options.icon + '"></i> <span class="title">' + this.options.title + '</span>' );
+            this.taskbarElem.append( this.taskbarElem.iconElem, this.taskbarElem.titleElem );
 
             this.taskbarElem.click(
                 function()
