@@ -1,7 +1,7 @@
 #!/usr/local/bin/node
 
 // Server, see https://gist.github.com/KenanSulayman/6195554
-// readDirectory.js, see
+// readDirectory.js, see https://gist.github.com/KenanSulayman/6187951
 
 /*
          __                            ___             
@@ -192,8 +192,6 @@ readDictionary("./static", 2, function (_fm) {
                 
                 if ( !_fs[fn_] )
                         return cancel(404);
-
-                console.log("static"+uri)
 
                 var s = fs.createReadStream(fn_),
                         etag = _fm["static"+uri].mtime

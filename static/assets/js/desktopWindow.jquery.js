@@ -28,7 +28,7 @@
             posX:            'center',
             posY:            'center',
             contentType:     'HTML',
-            contentSource:   'test-content.html',
+            contentSource:   'remote/test-content.html',
             contentSelector: 'div.content:first-child',
             actions:         {
                 reload:   true,
