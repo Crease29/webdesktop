@@ -1,10 +1,16 @@
-// App-Objekt
+/**
+ * App object
+ * This contains global settings
+ */
 webdesktop = {
     windows: {
         zIndexer: 1
     }
 };
 
+/**
+ * Recalculates the windows' wrapper when the browser window is resized
+ */
 function recalcWindowPlayground()
 {
     var oWindows = document.getElementById( 'windows' ),
@@ -24,7 +30,9 @@ window.onresize = function( event )
     recalcWindowPlayground()
 }
 
-// Desktop-Clock
+/**
+ * Updates the clock on the lower right of the desktop
+ */
 function updateClock()
 {
     var oElem = document.getElementById( 'sysclock' );
@@ -52,7 +60,7 @@ window.setInterval( updateClock, 999 );
 $( document ).ready(
     function()
     {
-        // Set window to active that is in front
+        // Fix: Set window to active that is in front
         window.setTimeout(
             function()
             {

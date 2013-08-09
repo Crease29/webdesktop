@@ -56,6 +56,34 @@
         this.init();
     }
 
+    /**
+     * desktopWindow prototype object
+     *
+     * @type {{
+     *         iNormalWidth: number,
+     *         iNormalHeight: number,
+     *         iNormalPosX: number,
+     *         iNormalPosY: number,
+     *         init: Function,
+     *         createNew: Function,
+     *         setDimensions: Function,
+     *         initEvents: Function,
+     *         minimize: Function,
+     *         maximize: Function,
+     *         close: Function,
+     *         reopenFromTaskbar: Function,
+     *         setTitle: Function,
+     *         setContent: Function,
+     *         initContentElementEvents: Function,
+     *         evalScripts: Function,
+     *         focus: Function,
+     *         showLoadingScreen: Function,
+     *         hideLoadingScreen: Function,
+     *         toggleLoadingScreen: Function,
+     *         appendToDesktop: Function,
+     *         addToTaskBar: Function
+     * }}
+     */
     desktopWindow.prototype = {
 
         iNormalWidth:  0,
@@ -63,6 +91,12 @@
         iNormalPosX:   0,
         iNormalPosY:   0,
 
+        /**
+         * This function is where everything of a window begins.
+         * Some setters and the procedure to create the window and append it to the desktop.
+         *
+         * @return void
+         */
         init: function()
         {
             // Place initialization logic here
@@ -88,6 +122,10 @@
             this.addToTaskBar();
         },
 
+        /**
+         * Creates the window div element and fills it with the basic elements like the topbar, actions, view-content
+         * and bottombar.
+         */
         createNew: function()
         {
             this.element.addClass( 'window shadowed' );
@@ -107,6 +145,9 @@
 
             actionsElem.className = 'actions pull-right';
 
+            /**
+             * Create reload action button.
+             */
             if( this.options.actions.reload )
             {
                 var actionsReloadElem = document.createElement( 'div' );
@@ -121,6 +162,9 @@
                 actionsElem.appendChild( actionsReloadElem );
             }
 
+            /**
+             * Create minimize action button.
+             */
             if( this.options.actions.minimize )
             {
                 var actionsMinimizeElem = document.createElement( 'div' );
@@ -135,6 +179,9 @@
                 actionsElem.appendChild( actionsMinimizeElem );
             }
 
+            /**
+             * Create maximize action button.
+             */
             if( this.options.actions.maximize )
             {
                 var actionsMaximizeElem = document.createElement( 'div' );
@@ -149,6 +196,9 @@
                 actionsElem.appendChild( actionsMaximizeElem );
             }
 
+            /**
+             * Create close action button.
+             */
             if( this.options.actions.close )
             {
                 var actionsCloseElem = document.createElement( 'div' );
@@ -163,6 +213,7 @@
                 actionsElem.appendChild( actionsCloseElem );
             }
 
+            // append configured elements to the topbar element
             this.element.topbar.append( iconElem, titleElem, actionsElem );
 
             // Create view-content
@@ -175,9 +226,13 @@
             // Create bottombar
             this.element.bottombar = $( '<div>' ).addClass( 'bottombar' );
 
+            // append basic elements to the window element
             this.element.append( this.element.topbar, this.element.viewContent, this.element.bottombar );
         },
 
+        /**
+         * Sets the dimensions of the window element given by the plugin options.
+         */
         setDimensions: function()
         {
             var oWindows = document.getElementById( 'windows' );
@@ -195,6 +250,9 @@
                 } );
         },
 
+        /**
+         * Initializes the events that can be bind to the window itself.
+         */
         initEvents: function()
         {
             var __this = this;
@@ -246,6 +304,9 @@
                 } );
         },
 
+        /**
+         * Minimizes the window to the taskbar.
+         */
         minimize: function()
         {
             this.element.animate(
@@ -260,6 +321,9 @@
             this.taskbarElem.removeClass( 'active' );
         },
 
+        /**
+         * Maximizes the window to full screen.
+         */
         maximize: function()
         {
             var __this = this,
@@ -288,12 +352,18 @@
             this.element.toggleClass( 'maximized' ).css( 'zIndex', ++webdesktop.windows.zIndexer );
         },
 
+        /**
+         * Closes the window and removes it from the DOM.
+         */
         close: function()
         {
             this.element.remove();
             this.taskbarElem.remove();
         },
 
+        /**
+         * Restores the window when it was minimized.
+         */
         reopenFromTaskbar: function()
         {
             $( '#windows' ).find( '.window.active' ).removeClass( 'active' );
@@ -306,6 +376,12 @@
             this.taskbarElem.addClass( 'active' );
         },
 
+        /**
+         * Sets the title of a window
+         *
+         * @param sTitle
+         * @returns {*}
+         */
         setTitle: function( sTitle )
         {
             this.element.topbar.find( '.title' ).text( sTitle );
@@ -314,6 +390,15 @@
             return this;
         },
 
+        /**
+         * Loads and sets the content to the window.
+         * Loads are performed via jQuery's AJAX method.
+         *
+         * @param sUrl
+         * @param sContentType
+         * @param sRequestType
+         * @param sContentSelector
+         */
         setContent: function( sUrl, sContentType, sRequestType, sContentSelector )
         {
             var __this = this;
@@ -344,6 +429,10 @@
             }
         },
 
+        /**
+         * Binds events to elements that were loaded in the window's content.
+         * This will be done after successfully setting the content in this.setContent().
+         */
         initContentElementEvents: function()
         {
             var __this = this;
@@ -359,6 +448,13 @@
                 } );
         },
 
+        /**
+         * Evaluates javascript that was loaded in this.setContent().
+         * The variable oWin represents the desktopWindow object and can be accessed in external loaded content
+         * to manipulate the desktopWindow object.
+         *
+         * @param aScriptElems
+         */
         evalScripts: function( aScriptElems )
         {
             if( aScriptElems.length > 0 )
@@ -383,6 +479,9 @@
             }
         },
 
+        /**
+         * Focuses the window, brings it to the foreground and sets it active in the taskbar.
+         */
         focus: function()
         {
             if( this.element[0].style.zIndex != webdesktop.windows.zIndexer )
@@ -397,24 +496,41 @@
             }
         },
 
+        /**
+         * Shows the loading overlay in the window.
+         */
         showLoadingScreen:   function()
         {
             this.element.viewContent.loadingScreen.show()
         },
+
+        /**
+         * Hides the loading overlay in the window.
+         */
         hideLoadingScreen:   function()
         {
             this.element.viewContent.loadingScreen.hide()
         },
+
+        /**
+         * Toggles the loading overlay in the window.
+         */
         toggleLoadingScreen: function()
         {
             this.element.viewContent.loadingScreen.toggle()
         },
 
+        /**
+         * Appends the window element to the desktop.
+         */
         appendToDesktop: function()
         {
             $( '#windows' ).append( this.element );
         },
 
+        /**
+         * Adds the taskbarElem to the taskbar
+         */
         addToTaskBar: function()
         {
             var __this = this;
