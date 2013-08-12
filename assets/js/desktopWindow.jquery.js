@@ -36,6 +36,14 @@
                 maximize: true,
                 close:    true,
                 resize:   true
+            },
+            strings: {
+                action_reload:   'reload',
+                action_minimize: 'minimize',
+                action_maximize: 'maximize',
+                action_close:    'close',
+                status_loading:  'Loading...',
+                status_ajax_404: 'Content could not be loaded...'
             }
         };
 
@@ -128,18 +136,18 @@
          */
         createNew: function()
         {
+            var __this = this;
+
             this.element.addClass( 'window shadowed' );
 
             // Create topbar
             this.element.topbar = $( '<div>' ).addClass( 'topbar no-select' );
 
-            var __this = this;
-
-            this.element.topbar.iconElem = document.createElement( 'div' );
-            this.element.topbar.titleElem = document.createElement( 'div' );
+            this.element.topbar.iconElem    = document.createElement( 'div' );
+            this.element.topbar.titleElem   = document.createElement( 'div' );
             this.element.topbar.actionsElem = document.createElement( 'div' );
 
-            this.element.topbar.titleElem.className = 'title';
+            this.element.topbar.titleElem.className   = 'title';
 
             this.element.topbar.actionsElem.className = 'actions pull-right';
 
@@ -150,6 +158,7 @@
             {
                 var actionsReloadElem = document.createElement( 'div' );
                 actionsReloadElem.className = 'reload';
+                actionsReloadElem.title = this.options.strings.action_reload;
 
                 $( actionsReloadElem ).click(
                     function()
@@ -167,6 +176,7 @@
             {
                 var actionsMinimizeElem = document.createElement( 'div' );
                 actionsMinimizeElem.className = 'minimize';
+                actionsMinimizeElem.title = this.options.strings.action_minimize;
 
                 $( actionsMinimizeElem ).click(
                     function()
@@ -184,6 +194,7 @@
             {
                 var actionsMaximizeElem = document.createElement( 'div' );
                 actionsMaximizeElem.className = 'maximize';
+                actionsMaximizeElem.title = this.options.strings.action_maximize;
 
                 $( actionsMaximizeElem ).click(
                     function()
@@ -201,6 +212,7 @@
             {
                 var actionsCloseElem = document.createElement( 'div' );
                 actionsCloseElem.className = 'close';
+                actionsCloseElem.title = this.options.strings.action_close;
 
                 $( actionsCloseElem ).click(
                     function()
@@ -225,6 +237,12 @@
 
             // Create bottombar
             this.element.bottombar = $( '<div>' ).addClass( 'bottombar' );
+
+            // Create bottombar status
+            this.element.bottombar.status = document.createElement( 'div' );
+            this.element.bottombar.status.className = 'status';
+
+            this.element.bottombar.append( this.element.bottombar.status );
 
             // append basic elements to the window element
             this.element.append( this.element.topbar, this.element.viewContent, this.element.bottombar );
@@ -408,6 +426,46 @@
         },
 
         /**
+         * Sets a text in the statusbar. If 2nd parameter is given, the status hides after N milliseconds.
+         * If there is a type given it will be set appended to the className.
+         * @param sText
+         * @param iHideDelay
+         * @param sType
+         * @returns {*}
+         */
+        setStatus: function( sText, iHideDelay, sType )
+        {
+            this.element.bottombar.status.className = 'status show ' + sType;
+            this.element.bottombar.status.innerText = sText;
+
+            if( typeof iHideDelay != 'undefined' )
+            {
+                var __this = this;
+
+                window.setTimeout(
+                    function()
+                    {
+                        __this.clearStatus();
+                    }, parseInt( iHideDelay )
+                )
+            }
+
+            return this;
+        },
+
+        /**
+         * Clears the text in the statusbar.
+         * @returns {*}
+         */
+        clearStatus: function()
+        {
+            this.element.bottombar.status.className = 'status';
+            this.element.bottombar.status.innerText = '';
+
+            return this;
+        },
+
+        /**
          * Loads and sets the content to the window.
          * Loads are performed via jQuery's AJAX method.
          *
@@ -427,22 +485,28 @@
             if( this.options.contentSource.length )
             {
                 this.showLoadingScreen();
+                this.setStatus( this.options.strings.status_loading );
 
                 $.ajax( {
-                            type: sRequestType || "GET",
-                            url:      this.options.contentSource,
-                            dataType: this.options.contentType,
-                            success:  function( sData )
-                            {
-                                var oCont = $( '<div>' + sData + '</div>' );
+                    type:     sRequestType || "GET",
+                    url:      this.options.contentSource,
+                    dataType: this.options.contentType,
+                    success:  function( sData )
+                    {
+                        var oCont = $( '<div>' + sData + '</div>' );
 
-                                __this.element.viewContent.html( $( __this.options.contentSelector, oCont ) ).prepend( __this.element.viewContent.loadingScreen );
-                                __this.initContentElementEvents();
-                                __this.evalScripts( $( 'script', oCont ) );
-                                __this.hideLoadingScreen();
-                            }
-                            // ToDo: Add error handling
-                        } );
+                        __this.element.viewContent.html( $( __this.options.contentSelector, oCont ) ).prepend( __this.element.viewContent.loadingScreen );
+                        __this.initContentElementEvents();
+                        __this.clearStatus();
+                        __this.hideLoadingScreen();
+                        __this.evalScripts( $( 'script', oCont ) );
+                    },
+                    error: function()
+                    {
+                        __this.hideLoadingScreen();
+                        __this.setStatus( __this.options.strings.status_ajax_404, 3500, 'error' );
+                    }
+                } );
             }
         },
 
@@ -519,7 +583,8 @@
          */
         showLoadingScreen: function()
         {
-            this.element.viewContent.loadingScreen.show()
+            this.element.viewContent.loadingScreen.show();
+            this.setStatus( this.options.strings.status_loading );
         },
 
         /**
@@ -527,7 +592,8 @@
          */
         hideLoadingScreen: function()
         {
-            this.element.viewContent.loadingScreen.hide()
+            this.element.viewContent.loadingScreen.hide();
+            this.clearStatus();
         },
 
         /**
@@ -535,7 +601,7 @@
          */
         toggleLoadingScreen: function()
         {
-            this.element.viewContent.loadingScreen.toggle()
+            this.element.viewContent.loadingScreen.toggle();
         },
 
         /**

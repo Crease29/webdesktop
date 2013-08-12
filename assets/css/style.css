@@ -634,6 +634,19 @@ body {
   bottom: 0;
   left: 0;
 }
+#windows .window .bottombar .status {
+  height: 17px;
+  width: 90%;
+  font-size: 12px;
+  padding: 3px 0 0 5px;
+}
+#windows .window .bottombar .status.error {
+  color: darkred;
+}
+#windows .window .bottombar .status.show {
+  -webkit-transition: padding 250ms;
+  transition: padding 250ms;
+}
 #windows .window .ui-resizable-s {
   width: 100%;
   height: 4px;

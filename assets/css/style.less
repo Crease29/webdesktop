@@ -475,6 +475,22 @@ body {
             position:absolute;
             bottom:0;
             left:0;
+
+            .status {
+                height:@bottombar-height - 3;
+                width:90%;
+                font-size:12px;
+                padding:3px 0 0 5px;
+
+                &.error {
+                    color:darkred;
+                }
+
+                &.show {
+                    -webkit-transition: padding 250ms;
+                    transition: padding 250ms;
+                }
+            }
         }
 
         .ui-resizable-s {
