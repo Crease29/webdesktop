@@ -442,7 +442,12 @@
             {
                 var __this = this;
 
-                window.setTimeout(
+                if( typeof this.element.bottombar.status.clearTimeout != 'undefined' )
+                {
+                    window.clearTimeout( this.element.bottombar.status.clearTimeout );
+                }
+
+                this.element.bottombar.status.clearTimeout = window.setTimeout(
                     function()
                     {
                         __this.clearStatus();
