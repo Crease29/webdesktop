@@ -58,11 +58,11 @@ updateClock();
 window.setInterval( updateClock, 999 );
 
 var init = function() {
-        // Fix: Set window to active that is in front
-        window.setTimeout(
-            function()
-            {
-                $( '#windows' ).find( '.window:last-child' ).data( 'desktopWindow' ).focus();
-            },
-            200 );
+    // Fix: Set window to active that is in front
+    window.setTimeout(
+        function()
+        {
+            $( '#windows' ).find( '.window:last-child' ).data( 'desktopWindow' ).focus();
+        },
+        200 );
 };
