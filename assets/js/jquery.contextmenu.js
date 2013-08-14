@@ -149,8 +149,7 @@
                                  hoverItem:cmenu.hoverItem,
                                  hoverItemOut:cmenu.hoverItemOut
                              },obj);
-            // If an icon is specified, hard-code the background-image style. Themes that don't show images should take this into account in their CSS
-            var iconStyle = (o.icon)?'background-image:url('+o.icon+');':'';
+
             var $div = $('<div class="'+cmenu.itemClassName+' '+o.className+((o.disabled)?' '+cmenu.disabledItemClassName:'')+'" title="'+o.title+'"></div>')
                 // If the item is disabled, don't do anything when it is clicked
                 .click(function(e){if(cmenu.isItemDisabled(this)){return false;}else{return o.onclick.call(cmenu.target,this,cmenu,e)}})
@@ -158,7 +157,15 @@
                 .hover( function(){ o.hoverItem.call(this,(cmenu.isItemDisabled(this))?cmenu.disabledItemHoverClassName:o.hoverClassName); }
                 ,function(){ o.hoverItemOut.call(this,(cmenu.isItemDisabled(this))?cmenu.disabledItemHoverClassName:o.hoverClassName); }
             );
-            var $idiv = $('<div class="'+cmenu.innerDivClassName+'" style="'+iconStyle+'">'+label+'</div>');
+            var $idiv = $('<div class="'+cmenu.innerDivClassName+'">'+label+'</div>');
+
+            if( o.icon )
+            {
+                oIcon = document.createElement( 'i' );
+                oIcon.className = o.icon;
+                $idiv.prepend( oIcon );
+            }
+
             $div.append($idiv);
             return $div;
         },
@@ -219,6 +226,7 @@
                     $c.find('iframe').css({width:$c.width()+cmenu.shadowOffsetX+cmenu.shadowWidthAdjust,height:$c.height()+cmenu.shadowOffsetY+cmenu.shadowHeightAdjust});
                 }
                 $c.css( {top:pos.y+"px", left:pos.x+"px", position:"absolute",zIndex:9999} )[cmenu.showTransition](cmenu.showSpeed,((cmenu.showCallback)?function(){cmenu.showCallback.call(cmenu);}:null));
+                $c.find( '.context-menu:first-child' ).removeClass( 'context-menu-dir-up context-menu-dir-down' ).addClass( 'context-menu-dir-' + pos.dir );
                 cmenu.shown=true;
                 $(document).one('click',null,function(){cmenu.hide()}); // Handle a single click to the document to hide the menu
             }
@@ -240,7 +248,7 @@
                 if (maxRight > ww) { x -= (maxRight-ww); }
             }
             if (dir=="up") { y -= h; }
-            return {'x':x,'y':y};
+            return {'x':x,'y':y,'dir':dir};
         },
 
         // Hide the menu, of course

@@ -156,11 +156,21 @@
             this.element.topbar = $( '<div>' ).addClass( 'topbar no-select' );
 
             var topbarContextMenu = {};
-            topbarContextMenu[ this.options.strings.action_minimize ] = function( menuItem, menu ) { __this.minimize(); }
-            topbarContextMenu[ this.options.strings.action_maximize ] = function( menuItem, menu ) { __this.maximize(); }
-            topbarContextMenu[ this.options.strings.action_close ]    = function( menuItem, menu ) { __this.close(); }
+            topbarContextMenu[ this.options.strings.action_minimize ] = {
+                onclick: function( menuItem, menu ) { __this.minimize(); },
+                icon: 'icon-minus'
+            };
+            topbarContextMenu[ this.options.strings.action_maximize ] = {
+                onclick: function( menuItem, menu ) { __this.maximize(); },
+                icon: 'icon-fullscreen'
+            };
+            topbarContextMenu[ this.options.strings.action_close ]    = {
+                onclick: function( menuItem, menu ) { __this.close(); },
+                icon: 'icon-remove'
+            };
 
-           this.element.topbar.contextMenu( [ topbarContextMenu ] );
+            // ToDo: Prevent opening when rightclicking on action elements (reload, minimize, ...)
+            this.element.topbar.contextMenu( [ topbarContextMenu ] );
 
             this.element.topbar.iconElem    = document.createElement( 'div' );
             this.element.topbar.titleElem   = document.createElement( 'div' );
@@ -303,6 +313,7 @@
                     cancel: '.reload, .minimize, .maximize, .close',
                     start:  function()
                     {
+                        // ToDo: Close opened context menus
                         $( this ).removeClass( 'shadowed' );
                     },
                     stop:   function()
@@ -645,7 +656,8 @@
          */
         addToTaskBar: function()
         {
-            var __this = this;
+            var __this = this,
+                oTasks = $( '#tasks' );
 
             this.taskbarElem.iconElem = document.createElement( 'i' );
             this.setIcon();
@@ -678,15 +690,14 @@
                     }
                 } );
 
-            $( '#tasks' ).append( this.taskbarElem );
-
+            oTasks.append( this.taskbarElem );
 
             // calculate taskbarItemsWidth and cut string
-            // @todo: put this part into new method?
+            // ToDo: put this part into new method?
             var getTaskbarItemsWidth = function()
             {
                 var taskbarItemsWidth = 0;
-                $( '#tasks li' ).each(
+                $( '#tasks' ).find( 'li' ).each(
                     function()
                     {
                         taskbarItemsWidth += $( this ).outerWidth();
@@ -700,10 +711,11 @@
 
             var _sub = 1;
 
-            while( _currentTaskbarItemsWidth > $( '#tasks').width() && _currentTaskbarItemsWidth != _lastTaskbarItemsWidth )
+            while( _currentTaskbarItemsWidth > oTasks.width() && _currentTaskbarItemsWidth != _lastTaskbarItemsWidth )
             {
                 _lastTaskbarItemsWidth = _currentTaskbarItemsWidth;
 
+                // ToDo: Better use CSS property text-overflow:emphasis; for cutting the text
                 $( '#tasks li' ).each(
                     function()
                     {
@@ -717,8 +729,6 @@
                 _currentTaskbarItemsWidth = getTaskbarItemsWidth();
 
             }
-
-
         }
     };
 
