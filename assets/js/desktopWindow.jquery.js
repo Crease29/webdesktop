@@ -155,6 +155,13 @@
             // Create topbar
             this.element.topbar = $( '<div>' ).addClass( 'topbar no-select' );
 
+            var topbarContextMenu = {};
+            topbarContextMenu[ this.options.strings.action_minimize ] = function( menuItem, menu ) { __this.minimize(); }
+            topbarContextMenu[ this.options.strings.action_maximize ] = function( menuItem, menu ) { __this.maximize(); }
+            topbarContextMenu[ this.options.strings.action_close ]    = function( menuItem, menu ) { __this.close(); }
+
+           this.element.topbar.contextMenu( [ topbarContextMenu ] );
+
             this.element.topbar.iconElem    = document.createElement( 'div' );
             this.element.topbar.titleElem   = document.createElement( 'div' );
             this.element.topbar.actionsElem = document.createElement( 'div' );

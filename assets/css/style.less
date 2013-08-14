@@ -564,3 +564,25 @@ body {
         }
     }
 }
+
+// Context menu
+.context-menu {
+    background-color:#FFF;
+    overflow:hidden;
+    .rounded();
+    .box-shadow( 0px, 0px, 8px, .83 );
+
+    .context-menu-item {
+        padding:3px 8px;
+        cursor:pointer;
+
+        &-hover {
+            background-color:#d1eafb;
+            -webkit-transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            -ms-transition: all 0.2s ease-in-out;
+            -o-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+        }
+    }
+}
