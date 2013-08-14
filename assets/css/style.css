@@ -380,7 +380,8 @@ body {
   background: -ms-linear-gradient(top, #45484d 0%, #000000 100%);
   background: linear-gradient(to bottom, #45484d 0%, #000000 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#45484d', endColorstr='#000000', GradientType=0);
-  width: 130px;
+  /*width:130px;*/
+
   height: 23px;
   padding: 10px 10px 0 10px;
   float: left;
