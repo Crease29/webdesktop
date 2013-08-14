@@ -44,6 +44,11 @@
                 action_close:    'close',
                 status_loading:  'Loading...',
                 status_ajax_404: 'Content could not be loaded...'
+            },
+            events: {
+                onInit:  function() {},
+                onOpen:  function() {},
+                onClose: function() {}
             }
         };
 
@@ -114,6 +119,9 @@
             // you can add more functions like the one below and
             // call them like so: this.yourOtherFunction(this.element, this.options).
 
+            // call onInit Event before window is rendered
+            this.options.events.onInit.call( this );
+
             this.element = $( this.element );
             this.taskbarElem = $( '<li>' );
 
@@ -128,6 +136,10 @@
             this.setContent();
             this.appendToDesktop();
             this.addToTaskBar();
+
+            // call onOpen Event after window is rendered
+            this.options.events.onOpen.call( this );
+
         },
 
         /**
@@ -375,6 +387,9 @@
          */
         close: function()
         {
+            // call onClose Event with object param
+            this.options.events.onClose.call( this );
+
             this.element.remove();
             this.taskbarElem.remove();
         },
@@ -406,6 +421,7 @@
 
             this.element.topbar.titleElem.innerText = sTitle;
             this.taskbarElem.titleElem.innerText = sTitle;
+            this.taskbarElem.titleElem.title = sTitle;
 
             return this;
         },
@@ -656,6 +672,46 @@
                 } );
 
             $( '#tasks' ).append( this.taskbarElem );
+
+
+            // calculate taskbarItemsWidth and cut string
+            // @todo: put this part into new method?
+            var getTaskbarItemsWidth = function()
+            {
+                var taskbarItemsWidth = 0;
+                $( '#tasks li' ).each(
+                    function()
+                    {
+                        taskbarItemsWidth += $( this ).outerWidth();
+                    }
+                );
+                return taskbarItemsWidth;
+            };
+
+            var _lastTaskbarItemsWidth    = 0,
+                _currentTaskbarItemsWidth = getTaskbarItemsWidth();
+
+            var _sub = 1;
+
+            while( _currentTaskbarItemsWidth > $( '#tasks').width() && _currentTaskbarItemsWidth != _lastTaskbarItemsWidth )
+            {
+                _lastTaskbarItemsWidth = _currentTaskbarItemsWidth;
+
+                $( '#tasks li' ).each(
+                    function()
+                    {
+                        var _text = $( 'span', this ).attr( 'title' );
+                        $( 'span', this ).text( _text.substr( 0, ( _text.length-(4+_sub) ) ) + '...' );
+                    }
+                );
+
+                _sub++;
+
+                _currentTaskbarItemsWidth = getTaskbarItemsWidth();
+
+            }
+
+
         }
     };
 
