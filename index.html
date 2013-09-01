@@ -15,107 +15,7 @@
 			<div id="taskbar">
 				<div class="start-btn no-select" title="Startmenü öffnen">
 					<i class="icon-th-large start-icon"></i>
-					<ul class="menu">
-						<li class="submenu-toggle">
-							<a href="javascript:;" title="Stammdaten öffnen">
-							    <i class="icon-rocket"></i> Stammdaten
-							</a>
-                            <ul class="submenu">
-                                <li>
-                                    <a title="" href="javascript:;">
-                                        <i class="icon-expand"></i> Grundeinstellungen
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="" href="javascript:;">
-                                        <i class="icon-expand"></i> L&auml;nder
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="" href="javascript:;">
-                                        <i class="icon-expand"></i> Lieferanten
-                                    </a>
-                                </li>
-                                <li class="submenu-toggle">
-                                    <a title="" href="javascript:;">
-                                        <i class="icon-expand"></i> Hersteller
-                                    </a>
-                                    <ul class="submenu">
-                                        <li>
-                                            <a title="" href="javascript:;">
-                                                <i class="icon-expand"></i> Grundeinstellungen
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="" href="javascript:;">
-                                                <i class="icon-expand"></i> L&auml;nder
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="" href="javascript:;">
-                                                <i class="icon-expand"></i> Lieferanten
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="" href="javascript:;">
-                                                <i class="icon-expand"></i> Hersteller
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a title="" href="javascript:;">
-                                                <i class="icon-expand"></i> Sprachen
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a title="" href="javascript:;">
-                                        <i class="icon-expand"></i> Sprachen
-                                    </a>
-                                </li>
-                            </ul>
-						</li>
-						<li>
-							<a href="javascript:;" title="Shopeinstellungen öffnen">
-							    <i class="icon-rocket"></i> Shopeinstellungen
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Erweiterungen öffnen">
-                                <i class="icon-rocket"></i> Erweiterungen
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Artikel öffnen">
-							    <i class="icon-rocket"></i> Artikel
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Benutzer öffnen">
-							    <i class="icon-rocket"></i> Benutzer
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Bestellungen öffnen">
-							    <i class="icon-rocket"></i> Bestellungen
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Kundeninformation öffnen">
-							    <i class="icon-rocket"></i> Kundeninformation
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Statistiken öffnen">
-							    <i class="icon-rocket"></i> Statistiken
-							</a>
-						</li>
-						<li>
-							<a href="javascript:;" title="Service öffnen">
-							    <i class="icon-rocket"></i> Service
-							</a>
-						</li>
-					</ul>
+					<ul class="menu"></ul>
 				</div>
 				<ul id="tasks" class="pull-left"></ul>
 				<div id="sysclock" class="pull-right no-select"></div>
@@ -136,10 +36,18 @@
 		<script src="assets/js/jquery-ui.min.js"></script>
 		<script src="assets/js/jquery.contextmenu.js"></script>
 		<script src="assets/js/desktop.js"></script>
-		<script src="assets/js/desktopWindow.jquery.js"></script>
-		
+		<script src="assets/js/jquery.desktopWindow.js"></script>
+		<script src="assets/js/jquery.menuParser.js"></script>
+
 		<script type="text/javascript">
 			$(document).ready(function() {
+
+               $( '#taskbar ul.menu' ).menuParser(
+                   {
+                       source: 'assets/json/menu.json'
+                   }
+               );
+
 				$('<div>').desktopWindow({
 					posY: 50,
 					posX: 200
